@@ -1,3 +1,25 @@
+// write a func checkIfGameOver
+// called once at end of playRound func
+// if either score is 5 game ends
+// and buttons thence have no further effect on score or text
+// otherwise display all relevant text as divs instead of logs
+
+let gameOverFlag = false;
+const results = document.querySelector(".results");
+const humanDisplay = document.querySelector(".human-score");
+const computerDisplay = document.querySelector(".computer-score");
+
+function checkIfGameOver() {
+    if (humanScore >= 5 || computerScore >= 5) {
+        gameOverFlag = true;
+        changeText(results, "Game over!");
+    }
+}
+
+function changeText(ele, text) {
+    ele.textContent = text;
+}
+
 function getComputerChoice() {
     const computerChoice = Math.floor(Math.random() * 3);
 
@@ -15,67 +37,74 @@ function getHumanChoice() {
     return humanChoice.toLowerCase();
 }
 
-function playGame() {
-    let humanScore = 0;
-    let computerScore = 0;
+function playRound(humanChoice, computerChoice) {
+    if (gameOverFlag) {
+        console.log("game over");
+        return;
+    }
 
-    function playRound(humanChoice, computerChoice) {
-        const drawString = `Draw! ${humanChoice} matches ${computerChoice}`;
-        const winString = `You win! ${humanChoice} beats ${computerChoice}`;
-        const loseString = `You lose! ${computerChoice} beats ${humanChoice}`;
+    let winState = ''
 
-        if (humanChoice == computerChoice) {
-            console.log(drawString);
-            return;
-        }
+    const drawString = `Draw! ${humanChoice} matches ${computerChoice}`;
+    const winString = `You win! ${humanChoice} beats ${computerChoice}`;
+    const loseString = `You lose! ${computerChoice} beats ${humanChoice}`;
 
+    if (humanChoice == computerChoice) {
+        winState = drawString;
+    } else {
         if (humanChoice == 'rock') {
             if (computerChoice == 'paper') {
-                console.log(loseString);
+                winState = loseString;
                 computerScore++;
             } else {
-                console.log(winString);
+                winState = winString;
                 humanScore++;
             }
         }
-
+    
         if (humanChoice == 'paper') {
             if (computerChoice == 'scissors') {
-                console.log(loseString);
+                winState = loseString;
                 computerScore++;
             } else {
-                console.log(winString);
+                winState = winString;
                 humanScore++;
             }
         }
-
+    
         if (humanChoice == 'scissors') {
             if (computerChoice == 'rock') {
-                console.log(loseString);
+                winState = loseString;
                 computerScore++;
             } else {
-                console.log(winString);
+                winState = winString;
                 humanScore++;
             }
         }
     }
 
-    for (let i = 0; i < 5; i++) {
-        console.log(`Your score: ${humanScore}`);
-        console.log(`Computer score: ${computerScore}`);
+    changeText(results, winState);
+    changeText(humanDisplay, humanScore);
+    changeText(computerDisplay, computerScore);
 
-        const humanChoice = getHumanChoice();
-        const computerChoice = getComputerChoice();
-        playRound(humanChoice, computerChoice);
-    }
-
-    if (humanScore > computerScore) {
-        console.log('You win the game!');
-    } else if (computerScore > humanScore) {
-        console.log('You lose the game.');
-    } else {
-        console.log('Draw.');
-    }
+    checkIfGameOver()
 }
 
-playGame();
+let humanScore = 0;
+let computerScore = 0;
+
+const rockButton = document.querySelector(".rock");
+const paperButton = document.querySelector(".paper");
+const scissorsButton = document.querySelector(".scissors");
+
+rockButton.addEventListener("click", () => {
+    playRound('rock', getComputerChoice());
+});
+
+paperButton.addEventListener("click", () => {
+    playRound('paper', getComputerChoice());
+});
+
+scissorsButton.addEventListener("click", () => {
+    playRound('scissors', getComputerChoice());
+});
